@@ -20,7 +20,9 @@ for iter = 1:num_iters
 
 
 
-
+	error = (X * theta) - y;
+	delta = X' * error;
+	theta = theta - (alpha/m) * delta;
 
 
 
