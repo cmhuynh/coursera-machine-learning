@@ -19,8 +19,15 @@ grad = zeros(size(theta));
 
 
 
+z = X * theta;
+h = sigmoid(z);
+J = 1 / m * ((-y' * log(h)) - (1 - y)' * log(1 - h));
+J = J + (lambda / (2 * m) * (sumsq(theta) - theta(1)*theta(1))); % square(theta(1)) in Octave on Windows
 
-
+grad = 1 / m * (X' * (h - y));
+theta_t = (lambda / m) * theta;
+theta_t(1) = 0;
+grad = grad .+ theta_t;
 
 % =============================================================
 
