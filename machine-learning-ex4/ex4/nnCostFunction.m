@@ -39,6 +39,23 @@ Theta2_grad = zeros(size(Theta2));
 %         cost function computation is correct by verifying the cost
 %         computed in ex4.m
 %
+
+
+h1 = sigmoid([ones(m, 1) X] * Theta1');
+h2 = sigmoid([ones(m, 1) h1] * Theta2'); % output matrix, size m x k
+			 
+% need to convert y from data set into a matrix of same size of h2 too
+Y = zeros(m, num_labels);
+for i=1:m
+  Y(i, :) = (1:num_labels)' == y(i);
+endfor		 
+
+% now multiply element wise two matrices to compute the cost at each vector element of each row, then sum the result matrix
+J = 1/m * sum([(-Y .* log(h2)) - ((1-Y) .* log(1-h2))](:)); % sum([](:)) sum all element of a matrix
+
+J = J + lambda/(2*m) * (sum(sumsq(Theta1(:, 2:end))(:)) + sum(sumsq(Theta2(:, 2:end))(:)));
+		 
+	
 % Part 2: Implement the backpropagation algorithm to compute the gradients
 %         Theta1_grad and Theta2_grad. You should return the partial derivatives of
 %         the cost function with respect to Theta1 and Theta2 in Theta1_grad and
