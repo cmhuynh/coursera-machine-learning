@@ -41,17 +41,21 @@ Theta2_grad = zeros(size(Theta2));
 %
 
 
-h1 = sigmoid([ones(m, 1) X] * Theta1');
-h2 = sigmoid([ones(m, 1) h1] * Theta2'); % output matrix, size m x k
+
+a1 = [ones(m, 1) X];
+z2 = a1 * Theta1';
+a2 = [ones(m, 1) sigmoid(z2)];
+z3 = a2 * Theta2';
+a3 = sigmoid(z3);
 			 
-% need to convert y from data set into a matrix of same size of h2 too
+% convert y into a matrix of same size of output too
 Y = zeros(m, num_labels);
 for i=1:m
   Y(i, :) = (1:num_labels)' == y(i);
 endfor		 
 
 % now multiply element wise two matrices to compute the cost at each vector element of each row, then sum the result matrix
-J = 1/m * sum([(-Y .* log(h2)) - ((1-Y) .* log(1-h2))](:)); % sum([](:)) sum all element of a matrix
+J = 1/m * sum([(-Y .* log(a3)) - ((1-Y) .* log(1-a3))](:)); 
 
 J = J + lambda/(2*m) * (sum(sumsq(Theta1(:, 2:end))(:)) + sum(sumsq(Theta2(:, 2:end))(:)));
 		 
@@ -71,6 +75,23 @@ J = J + lambda/(2*m) * (sum(sumsq(Theta1(:, 2:end))(:)) + sum(sumsq(Theta2(:, 2:
 %               over the training examples if you are implementing it for the 
 %               first time.
 %
+
+	
+	
+	
+d3 = a3 - Y;
+% multiply with matrix Theta2 including the bias; hence padding the 2nd matrix; and finally yield the difference without bias column
+d2 = ((d3 * Theta2) .* sigmoidGradient([ones(size(z2, 1), 1) z2]))(:, 2:end);
+
+% multiply with a1 and a2, includes padding of bias 1
+Theta1_grad = (d2' * a1) / m;
+Theta2_grad = (d3' * a2) / m;
+
+
+
+
+
+	
 % Part 3: Implement regularization with the cost function and gradients.
 %
 %         Hint: You can implement this around the code for
@@ -83,6 +104,8 @@ J = J + lambda/(2*m) * (sum(sumsq(Theta1(:, 2:end))(:)) + sum(sumsq(Theta2(:, 2:
 
 
 
+Theta1_grad = Theta1_grad + (lambda / m * [zeros(size(Theta1, 1), 1) Theta1(:, 2:end)]);
+Theta2_grad = Theta2_grad + (lambda / m * [zeros(size(Theta2, 1), 1) Theta2(:, 2:end)]);
 
 
 
