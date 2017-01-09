@@ -17,7 +17,13 @@ X_poly = zeros(numel(X), p);
 
 
 
-
+for i = 1:size(X,1)
+	x = X(i);
+	X_poly(i, 1) = x
+	for j = 2:p
+		X_poly(i, j) = x ^ j;
+	endfor
+endfor	
 
 
 % =========================================================================
