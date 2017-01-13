@@ -49,9 +49,12 @@ x = zeros(n, 1);
 %
 
 
+i_vec = (1:n)';
+for idx = 1:size(word_indices, 1)
+	x = x .+ (i_vec == word_indices(idx));
+endfor	
 
-
-
+x(x >= 1) = 1;
 
 
 

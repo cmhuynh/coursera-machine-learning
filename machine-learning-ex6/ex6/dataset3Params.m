@@ -24,9 +24,22 @@ sigma = 0.3;
 %
 
 
+C_range = [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30]';
+sigma_range = [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30]';
+errors = zeros(size(C_range, 1), size(sigma_range, 1));
+	
+for r = 1:size(sigma_range, 1)
+	for c = 1:size(C_range, 1)
+		model = svmTrain(X, y, C_range(c), @(x1, x2) gaussianKernel(x1, x2, sigma_range(r)));
+		predictions = svmPredict(model, Xval);
+		errors(r, c) = mean(double(predictions ~= yval));
+	endfor		
+endfor	
 
-
-
+		
+[r, c] = find(errors == min(errors(:)));
+sigma = sigma_range(r);
+C = C_range(c);
 
 
 % =========================================================================
